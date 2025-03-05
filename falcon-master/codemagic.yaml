@@ -7,10 +7,10 @@ workflows:
       cocoapods: default
       ios_signing:
         provisioning_profiles:
-          - profile: falcon_Provisioning  # Ensure this matches the profile name
+          - profile: falcon_Provisioning
         certificates:
-          - certificate: distribution_certificate_2  # Ensure this matches the certificate name
-        bundle_identifier: com.falconelearning2024.falcon
+          - certificate: distribution_certificate_2
+        bundle_identifier: com.falconelearning2024.falcon.main
     scripts:
       - name: Get Flutter packages
         script: |
@@ -22,7 +22,7 @@ workflows:
 
       - name: Fetch Latest Build Number from App Store Connect
         script: |
-          LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" --bundle-id com.falconelearning2024.falcon)
+          LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" --bundle-id com.falconelearning2024.falcon.main)
           echo "Latest build number is: $LATEST_BUILD"
           export NEW_BUILD_NUMBER=$(($LATEST_BUILD + 1))
           echo "New build number is: $NEW_BUILD_NUMBER"
@@ -32,19 +32,19 @@ workflows:
           flutter build ipa --release \
             --build-name=1.0.0 \
             --build-number=$NEW_BUILD_NUMBER \
-            --export-options-plist=export_options.plist  # Path updated to root of project
+            --export-options-plist=export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
 
     integrations:
-      app_store_connect: Falcon Api Key  # Ensure the API key is correctly set up
+      app_store_connect: Falcon Api Key
 
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true  # Set to true to publish on TestFlight
-        submit_to_app_store: true   # Set to true to submit directly to App Store
+        submit_to_testflight: true
+        submit_to_app_store: true
         release_type: SCHEDULED
 
 
