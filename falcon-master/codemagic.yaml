@@ -1,0 +1,132 @@
+workflows:
+  ios-release:
+    name: iOS Release
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        provisioning_profiles:
+          - profile: falcon_Provisioning  # Ensure this matches the profile name
+        certificates:
+          - certificate: distribution_certificate_2  # Ensure this matches the certificate name
+        bundle_identifier: com.falconelearning2024.falcon
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+
+      - name: Install pods
+        script: |
+          find ios -name "Podfile" -execdir pod install \;
+
+      - name: Fetch Latest Build Number from App Store Connect
+        script: |
+          LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" --bundle-id com.falconelearning2024.falcon)
+          echo "Latest build number is: $LATEST_BUILD"
+          export NEW_BUILD_NUMBER=$(($LATEST_BUILD + 1))
+          echo "New build number is: $NEW_BUILD_NUMBER"
+
+      - name: Flutter build ipa
+        script: |
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=$NEW_BUILD_NUMBER \
+            --export-options-plist=export_options.plist  # Path updated to root of project
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+
+    integrations:
+      app_store_connect: Falcon Api Key  # Ensure the API key is correctly set up
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true  # Set to true to publish on TestFlight
+        submit_to_app_store: true   # Set to true to submit directly to App Store
+        release_type: SCHEDULED
+
+
+
+#workflows:
+#  ios-release:
+#    name: iOS Release
+#    environment:
+#      flutter: stable
+#      xcode: latest
+#      cocoapods: default
+#      ios_signing:
+#        provisioning_profiles:
+#          - profile: falcon_Provisioning  # Ensure this matches the profile name
+#        certificates:
+#          - certificate: distribution_certificate_2  # Ensure this matches the certificate name
+#        bundle_identifier: com.falconelearning2024.falcon
+#    scripts:
+#      - name: Get Flutter packages
+#        script: |
+#          flutter packages pub get
+#
+#      - name: Install pods
+#        script: |
+#          find ios -name "Podfile" -execdir pod install \;
+#
+#      - name: Flutter build ipa
+#        script: |
+#          flutter build ipa --release \
+#            --build-name=1.0.0 \
+#            --build-number=$(($(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID") + 1)) \
+#            --export-options-plist=export_options.plist  # Path updated to root of project
+#
+#    artifacts:
+#      - build/ios/ipa/*.ipa
+#
+#    integrations:
+#      app_store_connect: Falcon Api Key  # Make sure this API key is correctly set up
+#
+#    publishing:
+#      app_store_connect:
+#        auth: integration
+#        submit_to_testflight: true  # Set to true to publish on TestFlight
+#        submit_to_app_store: true   # Set to true to submit directly to App Store
+#        release_type: SCHEDULED
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#    scripts:
+#      - name: Install Flutter dependencies
+#        script: flutter packages pub get
+#
+#      - name: Generate Podfile if missing
+#        script: |
+#          if [ ! -f ios/Podfile ]; then
+#            flutter build ios
+#          fi
+#
+#      - name: Update CocoaPods repository
+#        script: cd ios && pod repo update && cd ..
+#
+#      - name: Set iOS deployment target to 12.0+
+#        script: |
+#          if [ -f ios/Podfile ]; then
+#            sed -i '' 's/PLATFORM_VERSION = 9.0/PLATFORM_VERSION = 12.0/' ios/Podfile
+#            cd ios && pod install && cd ..
+#          fi
+#
+#      - name: Build iOS release with codesigning
+#        script: flutter build ios --release

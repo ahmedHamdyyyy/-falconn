@@ -1,0 +1,10 @@
+export 'package:falcon/presentation/presentation_exports.dart';
+export 'package:falcon/domain/domain_exports.dart';
+export 'package:falcon/data/data_exports.dart';
+export 'error/error_exports.dart';
+export 'network/network_exports.dart';
+export 'resources/resources_exports.dart';
+export 'utils/utils_exports.dart';
+export 'usecase/base_usecase.dart';
+export 'services/services_exports.dart';
+export 'local_services/local_services_exports.dart';

@@ -1,0 +1,9 @@
+export 'bottom_bar_view.dart';
+export 'custom_main_nav_bar.dart';
+export 'home_body.dart';
+export 'my_learning_body.dart';
+export 'tasks_body.dart';
+export 'doctors_body.dart';
+export 'profile_body.dart';
+export 'wallet_views.dart';
+export 'details_view.dart';
